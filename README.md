@@ -9,7 +9,7 @@ This is a script for analyzing qPCR data using the ddcq analysis method.
 
 options:
   -h, --help      show this help message and exit
-  -f INPUT_FILE   Input csv file for qpcr analysis. Same format as automatically generated from Snyder lab thermocycler
+  -f INPUT_FILE   Input csv file for qpcr analysis. Same format as automatically generated from Snyder Lab Real-Time PCR instrument
   -s REF_SAMPLE   Supply name of reference sample.
   -c CYCLES       Optional: Input total number of cycles used for qPCR. Default = 40
   -g REF_GENE     Optional: Supply reference gene name. Default = Ppia

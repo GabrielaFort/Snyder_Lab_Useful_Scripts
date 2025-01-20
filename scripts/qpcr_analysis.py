@@ -11,7 +11,7 @@ import pandas as pd
 # Document and assign input arguments
 parser = argparse.ArgumentParser(description=f"This is a script for analyzing qPCR data using the ddcq analysis method.", formatter_class = RawTextHelpFormatter)
 
-parser.add_argument("-f", required = True, help='Input csv file for qpcr analysis. Same format as automatically generated from Snyder lab thermocycler', dest = 'input_file')
+parser.add_argument("-f", required = True, help='Input csv file for qpcr analysis. Same format as automatically generated from Snyder Lab Real-Time PCR instrument', dest = 'input_file')
 
 parser.add_argument("-s", required = True, help='Supply name of reference sample.', dest = 'ref_sample')
 

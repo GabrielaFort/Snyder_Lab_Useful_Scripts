@@ -1,0 +1,100 @@
+---
+title: "Plotting ChIP Tracks in R"
+output: html_document
+date: "2024-08-23"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE)
+```
+
+## Generating ChIP genome browser tracks in R for publication-quality figures
+
+The [plotgardener](https://phanstiellab.github.io/plotgardener/index.html) R package is a useful tool for generating genome tracks showing ChIP data (similar to IGV). 
+
+Resulting plots can be exported as PDF images and used in illustrator for figure generation. 
+
+
+## Loading necessary packages
+```{r}
+# Load packages
+#BiocManager::install("plotgardener")
+library(plotgardener)
+#BiocManager::install("TxDb.Hsapiens.UCSC.hg19.knownGene")
+library(TxDb.Hsapiens.UCSC.hg19.knownGene)
+#BiocManager::install("org.Hs.eg.db")
+library(org.Hs.eg.db)
+#BiocManager::install("TxDb.Mmusculus.UCSC.mm10.knownGene")
+library(TxDb.Mmusculus.UCSC.mm10.knownGene)
+#BiocManager::install("org.Mm.eg.db")
+library(org.Mm.eg.db)
+```
+
+## Example of plotting using two biological replicates of HNF4a ChIP aligned to mm10 genome. 
+
+## Load in bigwig files (output from peak_calling.sh script)
+```{r}
+################# First plot HNF4a binding in dual-ID organoid #################
+Et_HNF_R1_path = "/uufs/chpc.utah.edu/common/home/snydere-group2/Gabby/3154_HNFdel_mm10/Rep1/Et_HNF_R1/Et_HNF_R1_treat_pileup.bw"
+Et_HNF_R2_path = "/uufs/chpc.utah.edu/common/home/snydere-group2/Gabby/3154_HNFdel_mm10/Rep2/Et_HNF_R2/Et_HNF_R2_treat_pileup.bw"
+Et_HNF_R1 <- readBigwig(file = Et_HNF_R1_path)
+Et_HNF_R2 <- readBigwig(file = Et_HNF_R2_path)
+```
+
+## Setting common parameters used in all plotting functions. 
+In order to determine the chromosome #, start, and stop positions, I identified
+my region of interest by browsing the bigwig files in IGV. 
+```{r}
+# Set parameters for all graphs
+params <- pgParams(
+  chrom = "chr5",
+  chromstart = 114960000, chromend = 114974000,
+  assembly = "mm10",
+  range = c(0, 16)
+)
+```
+
+## Calling each plotting function to build on one-another and generate a plot with both replicates
+```{r}
+## Create a page
+pageCreate(width = 7.5, height = 2.1, default.units = "inches",
+           showGuides = FALSE, xgrid = 0, ygrid = 0)
+
+## Plot and place signal plots
+signal1 <- plotSignal(
+  data = Et_HNF_R1, params = params, scale = T,
+  x = 0.5, y = 0.25, width = 6.5, height = 0.65,
+  just = c("left", "top"), default.units = "inches",
+  fill = 'maroon', linecolor='maroon')
+
+signal2 <- plotSignal(
+  data = Et_HNF_R2, params = params, scale = T,
+  x = 0.5, y = 1, width = 6.5, height = 0.65,
+  just = c("left", "top"), default.units = "inches",
+  fill = 'maroon',linecolor='maroon')
+
+## Add text labels
+plotText(
+  label = "Rep 1", fonsize = 10, fontcolor = "black",
+  x = 0.5, y = 0.5, just = c("left", "top"),
+  default.units = "inches")
+
+plotText(
+  label = "Rep 2", fonsize = 10, fontcolor = "black",
+  x = 0.5, y = 1.25, just = c("left", "top"),
+  default.units = "inches")
+
+# Plot gene body
+plotGenes(params = params, y = 1.45, x = 0.5, width = 6.5, height = 0.5,
+          just = c("left", "top"), default.units = "inches",
+          fontcolor = 'black', fill = 'black',fontsize = 10,
+          strandLabels = F)
+
+## Plot genome label
+plotGenomeLabel(params = params,x = 0.5, y = 2, length = 6.5,default.units = "inches")
+```
+
+```{r, message=TRUE}
+sessionInfo()
+```
+
